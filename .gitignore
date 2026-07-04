@@ -1,0 +1,28 @@
+# Reference material (structural inspiration only — not part of the workshop)
+inspiration/
+
+# Python
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+
+# Workshop-generated artifacts
+**/chroma_db/
+**/.chroma/
+data/telemetry.csv
+data/crew_logs.jsonl
+
+# Model / HF caches
+.ollama/
+.cache/
+*.gguf
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+*.swp

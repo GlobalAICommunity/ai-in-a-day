@@ -1,0 +1,30 @@
+# AI in a Day — "Orbital" workshop dependencies
+# Python 3.10+ recommended. Everything runs locally against Ollama (no cloud keys).
+
+# --- Core data / ML (Module 1) ---
+pandas>=2.1
+numpy>=1.26
+matplotlib>=3.8
+scikit-learn>=1.4
+
+# --- LLM access (Modules 3-7) ---
+# We talk to Ollama through its OpenAI-compatible API using the openai SDK.
+openai>=1.40
+
+# --- Embeddings & RAG (Modules 2, 4) ---
+chromadb>=0.5
+# Offline fallback for embeddings if you prefer not to use Ollama's embed model:
+# sentence-transformers>=3.0
+
+# --- MCP (Module 6) ---
+mcp>=1.2
+
+# --- Notebooks / tooling ---
+jupyter>=1.0
+ipykernel>=6.29
+python-dotenv>=1.0
+
+# --- Optional: run Phi-3.5 SLM locally in-process (Module 3 stretch/demo) ---
+# transformers>=4.44
+# torch>=2.2
+# accelerate>=0.33

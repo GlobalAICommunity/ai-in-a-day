@@ -43,7 +43,7 @@ def get_client() -> "OpenAI":
 
 
 def chat(
-    prompt: str,
+    prompt: str = "",
     *,
     system: str | None = None,
     model: str = CHAT_MODEL,

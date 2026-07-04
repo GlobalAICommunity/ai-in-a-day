@@ -108,4 +108,4 @@ The **structure and pacing** of this workshop were inspired by Microsoft's excel
 
 ## 📄 License
 
-See [LICENSE](LICENSE) if present, otherwise MIT‑style educational use.
+No separate license file is included yet. Add one before publishing the workshop outside your organization.

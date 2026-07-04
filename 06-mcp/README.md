@@ -1,8 +1,11 @@
 # Module 6 · Wiring the colony (MCP) 🔌
 
-> **Story:** ARIA's tools currently live inside our Python code. To make them reusable by
-> *any* AI app — VS Code, another agent, a future dashboard — we expose them through the
-> **Model Context Protocol (MCP)**, the "USB port" for AI tools.
+> **Story so far:** ARIA's tools currently live *inside our Python code*. Only our program can
+> call them. But imagine you want to use those same colony tools from VS Code, or from a
+> different assistant, or from a dashboard the crew builds next year. Rewriting the tools for
+> every app would be madness. Instead we expose them **once** through a shared standard: the
+> **Model Context Protocol (MCP)**. Think of MCP as the *USB-C port* for AI tools — one
+> connector everything can plug into.
 
 **Time:** ~50 min · **Beats:** 2 (both **Core**)
 
@@ -11,26 +14,39 @@
 | 6a | Build an MCP server for colony systems | Core · Live-code | 25 min |
 | 6b | Connect a client + MCP security | Core · Live-code | 25 min |
 
-## Learning objectives
+---
 
-- Understand **MCP**: a standard protocol so AI apps and tools can talk to each other
-- Know the **client ↔ server** model and the difference between **tools** and **resources**
-- Build an MCP **server** that exposes Orbital's systems
-- Connect an MCP **client** and call the tools
-- Apply MCP **security**: input validation, least privilege, human confirmation
+## What is MCP, and why should you care?
 
-## Why MCP
+**MCP (Model Context Protocol)** is an open standard for connecting AI applications to tools
+and data. It defines a common \"language\" so that any AI app (a **client**) can discover and
+use the capabilities offered by any tool provider (a **server**) — without custom glue code
+for each combination.
 
-In Module 5, ARIA's tools were Python functions only *our* code could call. MCP turns them
-into a **standard service**: define a tool once, and any MCP-aware client can use it. It's
-how modern AI tools plug into editors, agents, and assistants without custom glue.
+Before MCP, every AI app integrated every tool in its own bespoke way — an N×M mess. MCP turns
+that into N+M: build a tool as an MCP **server** once, and *every* MCP-aware client can use it.
+This is why MCP has been adopted across the industry surprisingly fast: it's the plumbing that
+lets the AI ecosystem interoperate.
 
-```
-   ARIA / VS Code / any agent            our Python
-        (MCP client)   <── stdio ──>   (MCP server: orbital_mcp_server.py)
-```
+### The two roles
+- **MCP server** — a program that *offers* capabilities. Ours (`orbital_mcp_server.py`) offers
+  colony tools like reading a sensor or raising an alert.
+- **MCP client** — a program that *uses* those capabilities. In 6b you'll write a client; in
+  real life VS Code, Claude Desktop, or an agent could be the client.
 
-## The server
+They talk over a **transport**. We use **stdio** (standard input/output): the client launches
+the server as a subprocess and they exchange messages through the pipe between them. Simple,
+local, no network.
+
+### Tools vs resources
+MCP servers can expose two kinds of things:
+- **Tools** — actions the client can *invoke* (e.g. `get_sensor`, `raise_alert`).
+- **Resources** — data the client can *read* (e.g. `orbital://signals`, the list of valid
+  signals). Think tools = verbs, resources = nouns.
+
+---
+
+## Our server at a glance
 
 [`orbital_mcp_server.py`](orbital_mcp_server.py) exposes:
 
@@ -42,25 +58,34 @@ how modern AI tools plug into editors, agents, and assistants without custom glu
 | `raise_alert(level, message)` | record an alert |
 | `control_valve(valve, state)` | **simulated**, needs human confirmation |
 
-Plus a **resource** `orbital://signals` listing valid signals and their nominal bands.
+Plus a **resource** `orbital://signals` listing valid signals and their nominal bands. Under
+the hood these reuse the exact same functions from [`../shared/tools.py`](../shared/tools.py)
+that your agent used in Module 5 — we're just publishing them over a standard protocol now.
+
+---
 
 ## Beats
 
 ### 6a · Build the server → [`06a_build_server.ipynb`](06a_build_server.ipynb)
-Walk through the server code, see how a plain function becomes an MCP tool with `@mcp.tool()`,
-and list what it exposes.
+See how a plain Python function becomes an MCP tool with a single `@mcp.tool()` decorator, and
+inspect everything the server offers. You'll appreciate how little code MCP requires.
 
 ### 6b · Connect a client → [`06b_connect_client.ipynb`](06b_connect_client.ipynb)
-Launch the server, connect an MCP client, discover the tools, and call them — then discuss
-what could go wrong and how MCP servers stay safe.
+Act as an MCP client: launch the server, discover its tools over the protocol, call them, and
+confirm the safety guard on `control_valve`. Then we discuss what makes an MCP server safe.
 
-## 🛡️ MCP security thread
+---
 
-- **Validate inputs** — a tool must never trust arguments blindly (our `get_sensor` checks
-  the signal name; `raise_alert` checks the level).
-- **Least privilege** — expose only what's needed; keep dangerous actions simulated/guarded.
-- **Human-in-the-loop** — `control_valve` only *requests*; a human confirms real actions.
+## 🛡️ MCP security (why this matters)
 
-## ✅ Done when
-Your client lists the five tools and successfully calls `get_sensor("o2_pct")`. Solution in
-[`solution/`](solution/).
+An MCP server is a door into your systems, so it must be built defensively:
+- **Validate inputs** — never trust arguments blindly. Our `get_sensor` rejects unknown signal
+  names; `raise_alert` only accepts valid levels.
+- **Least privilege** — expose only what's needed, and keep dangerous actions simulated or
+  guarded.
+- **Human-in-the-loop** — `control_valve` only *requests* a change and returns a \"needs human
+  confirmation\" message; it never actuates anything by itself.
+
+## ✅ You're done when
+Your client lists the five tools and successfully calls `get_sensor(\"o2_pct\")` over MCP.
+Solution in [`solution/`](solution/).

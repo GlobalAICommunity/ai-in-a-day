@@ -4,7 +4,7 @@
 
 **AI in a Day** is a hands‑on, 8‑hour workshop for people who know a little Python but are new to AI/ML. You'll build a colony assistant called **ARIA** and grow it across the day: from reading sensor data, to talking to a language model, to grounding it in the colony's manuals (RAG), to letting it take actions safely as an **agent**, to wiring it into real systems with the **Model Context Protocol (MCP)**.
 
-Everything runs **locally and offline** using [Ollama](https://ollama.com) — **no cloud accounts, no API keys, no bills.**
+After setup, the labs run **locally** using [Ollama](https://ollama.com) — **no cloud accounts, no API keys, no bills.**
 
 ---
 
@@ -43,14 +43,15 @@ Plus **lunch** and **two breaks**. Total ≈ 8 hours.
 
 ## ✅ Before you arrive — REQUIRED pre‑work (~20–40 min)
 
-The workshop starts *building*, not installing. Please complete setup **before** the day — the big model downloads take time on shared Wi‑Fi.
+The workshop starts *building*, not installing. Please complete setup **before** the day — package installs and model downloads need an internet connection and take time on shared Wi‑Fi.
 
 👉 **Follow [setup/README.md](setup/README.md)** to:
 
 1. Install **Python 3.10+** and **Ollama**
 2. Pull the local models: `llama3.2`, `phi3.5`, `nomic-embed-text`
 3. Create a virtual environment and `pip install -r requirements.txt`
-4. Run the verifier:
+4. Generate the workshop data: `python data/generate_telemetry.py`
+5. Run the verifier:
 
    ```bash
    python setup/verify.py
@@ -96,7 +97,7 @@ Just start at [`01-data-and-ml/README.md`](01-data-and-ml/README.md) and go at y
 setup/        Pre-work install guide + verify.py
 shared/       Small helpers (LLM client, scenario constants)
 data/         Telemetry generator, crew logs, and the colony manuals
-01-data-and-ml/ … 07-capstone/   The eight modules (lesson + starter + solution)
+01-data-and-ml/ … 07-capstone/   The seven lesson modules (lesson + starter + solution)
 docs/         Instructor guide, slides outline, responsible-AI notes
 ```
 

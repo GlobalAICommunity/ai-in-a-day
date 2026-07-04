@@ -74,9 +74,26 @@ pip install -r requirements.txt
 ```
 
 > 💡 Prefer a one‑shot install? Run `bash setup/bootstrap.sh` (macOS/Linux) or
-> `setup/bootstrap.ps1` (Windows) — it does steps 3–4 for you (Ollama must already be installed).
+> `setup/bootstrap.ps1` (Windows) — it pulls models, installs packages, generates the workshop
+> data, and runs the verifier (Ollama must already be installed and running).
 
-## 5. Verify everything
+## 5. Generate the workshop data
+
+The telemetry and crew-log files are generated from a script so the workshop stays reproducible
+without committing generated outputs. From the repository root, run:
+
+```bash
+python data/generate_telemetry.py
+```
+
+You should see it write:
+
+```text
+data/telemetry.csv
+data/crew_logs.jsonl
+```
+
+## 6. Verify everything
 
 With the virtual environment active and Ollama running:
 

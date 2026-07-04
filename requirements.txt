@@ -13,7 +13,7 @@ openai>=1.40
 
 # --- Embeddings & RAG (Modules 2, 4) ---
 chromadb>=0.5
-# Offline fallback for embeddings if you prefer not to use Ollama's embed model:
+# Optional experiment, not used by the default workshop notebooks:
 # sentence-transformers>=3.0
 
 # --- MCP (Module 6) ---

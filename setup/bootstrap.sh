@@ -21,5 +21,8 @@ source .venv/bin/activate
 python -m pip install --upgrade pip
 pip install -r requirements.txt
 
-# 3. Verify
+# 3. Generate reproducible workshop data
+python data/generate_telemetry.py
+
+# 4. Verify
 python setup/verify.py

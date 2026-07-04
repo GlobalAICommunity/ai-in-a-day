@@ -2,7 +2,7 @@
 
 This guide gives you per-module timing, talking points, what to **live-code** vs **demo**,
 and common pitfalls. The workshop is designed to be run by an instructor **and** followed
-self-paced, so every lab has a full solution.
+self-paced, so every core lab has a full solution.
 
 ## Before the day
 

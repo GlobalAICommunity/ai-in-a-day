@@ -17,13 +17,16 @@
 ## The problem embeddings solve
 
 Suppose a crew member types: *"oxygen partial pressure is dropping."* Later, someone searches
-the logs for *"O₂ is falling."* A plain **keyword search** would find **nothing** — the two
-sentences share almost no words, even though they mean the same thing. Keyword search matches
-*letters*, not *meaning*.
+the logs for *"O₂ is falling."* A plain **keyword search** — the kind that just checks whether
+the exact same words appear — would find **nothing**, because the two sentences share almost
+no words, even though they mean the same thing. Keyword search matches *letters*, not
+*meaning*.
 
 Humans don't have this problem: we understand that "O₂ falling" and "oxygen pressure
-dropping" are the same concern. We want to give the computer that same ability. That's
-exactly what embeddings provide.
+dropping" are the same concern, without consciously thinking about it. We want to give the
+computer that same ability, so it can search by what a sentence *means* rather than by which
+exact words it happens to contain. That's exactly what embeddings provide, and it's the single
+idea that makes almost every "smart search" and AI-assistant feature possible.
 
 ---
 
@@ -33,43 +36,53 @@ exactly what embeddings provide.
 An **embedding** is a way of turning a piece of text into a **list of numbers** (called a
 **vector**) such that *texts with similar meaning get similar numbers*. A special AI model —
 an **embedding model** — reads the text and outputs, say, 768 numbers that together capture
-its meaning.
+its meaning. You don't design these numbers by hand; the model produces them, having learned
+from vast amounts of text what tends to mean the same thing as what.
 
-You can picture each vector as a **point in space**. Texts about oxygen problems cluster in
-one region; texts about dust storms cluster in another. "Meaning" becomes "location," and
-"similar meaning" becomes "nearby points." That's the whole trick.
+You can picture each vector as a **point in space** — admittedly a space with hundreds of
+dimensions, which is impossible to truly visualize, but the 2D/3D intuition still holds up
+well enough to reason about. Texts about oxygen problems cluster in one region; texts about
+dust storms cluster in another. "Meaning" becomes "location," and "similar meaning" becomes
+"nearby points." That's the whole trick.
 
 > Analogy: think of placing books in a library. Instead of shelving by the exact title,
 > imagine shelving by *topic*, so all the books about the same idea end up physically next to
 > each other — even if their titles use different words. Embeddings shelve *sentences* that
-> way, automatically.
+> way, automatically, and instantly, for any text you give them.
 
 ### How do we measure "similar"?
 Once each text is a vector (a point/direction in space), we measure similarity with **cosine
 similarity** — a number between -1 and 1 that describes whether two vectors point in the same
-direction:
+direction, regardless of how "long" each vector is:
 - **near 1** → very similar meaning,
 - **near 0** → unrelated,
 - **below 0** → opposite-ish.
 
-We'll compute this ourselves; it's just a short formula, and seeing it demystifies the whole
-thing.
+We'll compute this ourselves from the raw numbers; it's just a short formula (multiply
+matching positions together, add them up, divide by the vectors' lengths), and seeing exactly
+how it works demystifies the whole "AI understands meaning" idea — underneath, it's ordinary
+arithmetic on a list of numbers.
 
 ### Where does the embedding model run?
 Locally! We use Ollama's `nomic-embed-text` model. No cloud, no keys — the same text-to-vector
-magic that powers big search systems, running on your laptop.
+magic that powers big search systems, running entirely on your laptop, with nothing you type
+ever leaving your machine.
 
 ---
 
 ## Why this matters for the rest of the day
 
-Embeddings are the foundation of two things you'll build later:
+Embeddings are the foundation of two things you'll build later, and understanding them now is
+what makes those modules feel obvious instead of magical:
 - **RAG (Module 4)** — to answer a question, we first *embed the question*, then find the
-  manual passages whose embeddings are closest, and feed those to the language model.
+  manual passages whose embeddings are closest, and feed those to the language model. That's
+  the exact same "embed, then compare" pattern you're about to build here, just applied to
+  operations manuals instead of crew logs.
 - **Agentic retrieval (Module 5)** — ARIA will decide to search for relevant knowledge on its
-  own, using this same mechanism.
+  own, using this same mechanism, as one of several tools available to her.
 
-Understand embeddings now, and those later modules will feel natural.
+Understand embeddings now, and those later modules will feel natural rather than like new
+magic tricks.
 
 ---
 

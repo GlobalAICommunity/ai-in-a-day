@@ -1,7 +1,15 @@
 # Responsible AI & Security — the thread through the day
 
 This isn't a separate lecture; it's woven into every module. Here's the throughline in one
-place, for instructors and curious learners.
+place, for instructors and curious learners. If you're reading this without having done any
+of the modules yet, don't worry — every term below is explained in plain language, and each
+one is also introduced again, with hands-on examples, in the module where it first matters.
+
+**Why does a workshop about building AI spend so much time on safety?** Because the two are
+not actually separate topics. An AI system that answers confidently but wrongly, or that blindly
+follows a hidden instruction buried in some data it read, isn't a *rare edge case* — it's the
+default behaviour of these systems unless you deliberately design against it. Learning to build
+with AI and learning to build *safely* with AI are the same skill, taught together.
 
 ## Why a Mars colony?
 

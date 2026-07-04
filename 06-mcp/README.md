@@ -18,31 +18,41 @@
 
 ## What is MCP, and why should you care?
 
-**MCP (Model Context Protocol)** is an open standard for connecting AI applications to tools
-and data. It defines a common \"language\" so that any AI app (a **client**) can discover and
-use the capabilities offered by any tool provider (a **server**) — without custom glue code
-for each combination.
+**MCP (Model Context Protocol)** is an open standard — an agreed-upon set of rules that
+different programs follow so they can talk to each other reliably — for connecting AI
+applications to tools and data. It defines a common "language" so that any AI app (a
+**client**) can discover and use the capabilities offered by any tool provider (a **server**)
+— without custom, one-off glue code for each combination of "this AI app" plus "that tool."
 
-Before MCP, every AI app integrated every tool in its own bespoke way — an N×M mess. MCP turns
-that into N+M: build a tool as an MCP **server** once, and *every* MCP-aware client can use it.
-This is why MCP has been adopted across the industry surprisingly fast: it's the plumbing that
-lets the AI ecosystem interoperate.
+Before MCP, every AI app integrated every tool in its own bespoke way — if you have N AI apps
+and M tools, that's potentially N×M different integrations, each maintained separately. MCP
+turns that into N+M: build a tool as an MCP **server** once, and *every* MCP-aware client can
+use it, and build a client once, and it can use *every* MCP server, without either side needing
+to know the other's internal code. This is why MCP has been adopted across the industry
+surprisingly fast: it's the plumbing that lets the AI ecosystem interoperate, the same way USB
+let any peripheral plug into any computer once both sides agreed on one standard.
 
 ### The two roles
 - **MCP server** — a program that *offers* capabilities. Ours (`orbital_mcp_server.py`) offers
-  colony tools like reading a sensor or raising an alert.
+  colony tools like reading a sensor or raising an alert. A server doesn't know or care who its
+  clients are; it just answers requests according to the protocol.
 - **MCP client** — a program that *uses* those capabilities. In 6b you'll write a client; in
-  real life VS Code, Claude Desktop, or an agent could be the client.
+  real life VS Code, Claude Desktop, or an agent framework could be the client, connecting to
+  the exact same server you're about to build without any changes to it.
 
-They talk over a **transport**. We use **stdio** (standard input/output): the client launches
-the server as a subprocess and they exchange messages through the pipe between them. Simple,
-local, no network.
+They talk over a **transport** — the underlying communication channel. We use **stdio**
+("standard input/output," the same input/output channel a command-line program normally uses
+to print text and read keyboard input): the client launches the server as a **subprocess** (a
+program started and controlled by another program) and they exchange structured messages
+through the pipe connecting them. Simple, entirely local, no network involved.
 
 ### Tools vs resources
 MCP servers can expose two kinds of things:
-- **Tools** — actions the client can *invoke* (e.g. `get_sensor`, `raise_alert`).
-- **Resources** — data the client can *read* (e.g. `orbital://signals`, the list of valid
-  signals). Think tools = verbs, resources = nouns.
+- **Tools** — actions the client can *invoke*, i.e. functions it can call with arguments and
+  get a result back (e.g. `get_sensor`, `raise_alert`).
+- **Resources** — data the client can simply *read*, more like a file or a webpage than a
+  function call (e.g. `orbital://signals`, the list of valid signals). Think tools = verbs,
+  resources = nouns.
 
 ---
 
@@ -83,9 +93,9 @@ An MCP server is a door into your systems, so it must be built defensively:
   names; `raise_alert` only accepts valid levels.
 - **Least privilege** — expose only what's needed, and keep dangerous actions simulated or
   guarded.
-- **Human-in-the-loop** — `control_valve` only *requests* a change and returns a \"needs human
-  confirmation\" message; it never actuates anything by itself.
+- **Human-in-the-loop** — `control_valve` only *requests* a change and returns a "needs human
+  confirmation" message; it never actuates anything by itself.
 
 ## ✅ You're done when
-Your client lists the five tools and successfully calls `get_sensor(\"o2_pct\")` over MCP.
+Your client lists the five tools and successfully calls `get_sensor("o2_pct")` over MCP.
 Solution in [`solution/`](solution/).

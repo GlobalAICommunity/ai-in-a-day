@@ -23,11 +23,30 @@ project starts: by getting our hands on the data and really looking at it.
 
 The good news: this module uses skills that are useful *far* beyond AI. Loading a
 spreadsheet, cleaning messy values, drawing a chart, and spotting the weird points — that's
-the daily bread of data science everywhere.
+the daily bread of data science everywhere, and it's also just genuinely useful for
+understanding *any* system that produces numbers over time, AI-related or not.
+
+One more reason this comes first: everything ARIA does later in the day is only as good as
+the data underneath it. In Module 3 you'll see an AI model confidently invent a fact; in
+Module 4 you'll fix that by grounding it in real documents. That same lesson — *garbage in,
+garbage out* — applies here too. A model trained on messy, uninspected data will learn the
+mess, not the truth. So today's very first skill, before any "AI magic," is simply: **look at
+your data before you trust anything built on top of it.**
 
 ---
 
 ## The concepts, explained
+
+### What is a CSV file, and what is a DataFrame?
+A **CSV** ("comma-separated values") file is one of the simplest possible ways to store a
+table as plain text: each line is one row, and commas separate the columns. You could open
+`telemetry.csv` in a text editor and read it, but it would be tedious to work with by eye. In
+the notebook, we'll load it with a library called **pandas** into a structure called a
+**DataFrame** — think of it as a spreadsheet you control entirely with code: you can filter
+rows, compute averages, and draw charts with a single line, instead of clicking around a
+spreadsheet app. Almost every data task in Python starts by getting your data into a
+DataFrame, so this is a foundational skill you'll reuse constantly, in this workshop and
+beyond.
 
 ### What is "telemetry"?
 **Telemetry** just means *measurements collected automatically by sensors over time*. Your
@@ -38,20 +57,27 @@ our data is one moment in time; each column is one thing being measured.
 ### What is a "time series"?
 Because our readings are stamped with a time and arrive in order, this is a **time series** —
 data where *order and timing matter*. "O₂ was 21% at 2pm and 18% at 3pm" tells a story that a
-random pile of numbers wouldn't. We'll plot these against time so the story becomes visible.
+random pile of numbers wouldn't. We'll plot these against time — draw a line chart with time
+on the horizontal axis and the sensor value on the vertical axis — so the story becomes
+visible at a glance instead of buried in a table of numbers.
 
 ### What is an "anomaly"?
 An **anomaly** is a reading (or stretch of readings) that is *unusual* compared to normal
 behaviour — often a sign that something is wrong. A CO₂ scrubber failing, a dust storm
 choking the solar panels, a heater glitching: each shows up as numbers that don't look like
 the calm, healthy baseline. Teaching a computer to flag anomalies automatically means the
-crew doesn't have to stare at dashboards all day.
+crew doesn't have to stare at dashboards all day, watching for a problem that might only show
+up once a week.
 
 ### What is a "model"?
 In machine learning, a **model** is a program that has *learned a pattern from data* instead
 of being told the rules by a programmer. We won't write "if O₂ < 19.5 then alarm." Instead
-we'll show a model what normal looks like and let it decide what counts as strange. That
-ability to learn patterns is the thread that runs through this entire day.
+we'll show a model what normal looks like and let it decide what counts as strange — which
+matters because in a real colony, "normal" for one sensor on one day might look different
+from "normal" on another day, and hard-coded thresholds can't adapt to that the way a learned
+pattern can. That ability to learn patterns instead of following fixed rules is the thread
+that runs through this entire day — every module from here on is really just a different
+flavour of "a model learned something useful and we're putting it to work."
 
 ---
 
@@ -101,14 +127,19 @@ Finding these is the whole point of the module.
 ## Beats
 
 ### 1a · Explore & clean → [`01a_explore_clean.ipynb`](01a_explore_clean.ipynb)
-Load the CSV into a **pandas DataFrame** (think: a spreadsheet you can control with code),
-inspect it, fix a handful of missing readings, and plot O₂, CO₂, and power across the week.
-By the end you should be able to *point at the oxygen drop with your finger*.
+Load the CSV into a **pandas DataFrame**, inspect it, fix a handful of missing readings, and
+plot O₂, CO₂, and power across the week. "Cleaning" here mostly means deciding what to do
+about gaps and obviously-wrong values — a sensor that briefly dropped out, say — so that later
+steps aren't confused by holes in the data. By the end you should be able to *point at the
+oxygen drop with your finger* on a chart.
 
 ### 1b · Anomaly model → [`01b_anomaly_model.ipynb`](01b_anomaly_model.ipynb)
 Use a classic machine-learning method (`IsolationForest`) that learns what "normal" looks
-like and flags the outliers — **without ever being told where the incidents are**. Then we
-compare its guesses to our answer key to see how well it did.
+like and flags the outliers — **without ever being told where the incidents are**. This is
+called **unsupervised learning**: the model isn't shown an answer key while it learns, it just
+looks for points that are structurally different from the rest. Then we compare its guesses to
+our answer key (the `label` column) to see how well it did — our first taste of *evaluating* a
+model rather than just trusting it.
 
 ---
 

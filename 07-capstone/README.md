@@ -19,7 +19,7 @@ working assistant:
 | From | Capability it contributes |
 |---|---|
 | Module 1 | The telemetry that reveals the O₂ drop |
-| Module 3 | The LLM \"brain\" and structured decisions |
+| Module 3 | The LLM "brain" and structured decisions |
 | Module 4 | RAG over the operations manuals |
 | Module 5 | The agent loop (model + tools + reasoning) |
 | Module 6 | Colony actions exposed over the **MCP server** |
@@ -33,17 +33,26 @@ best one for the job.
 
 ## How the capstone agent works
 
-It's the same **agent loop** from Module 5, with one upgrade: when the model asks to call a
-tool, our code decides whether to route that call to the **MCP server** (for colony systems) or
-to the **local RAG** function (for manual lookups). Concretely:
+It's the same **agent loop** from Module 5 (the model reasons → requests a tool → our code runs
+it → the result goes back to the model → repeat), with one upgrade: when the model asks to call
+a tool, our code now has to decide whether to route that call to the **MCP server** (for
+colony systems, connected the way you learned in Module 6) or to the **local RAG** function
+(for manual lookups, the way you built in Module 4). Concretely, putting it all together looks
+like this:
 
-1. Connect to the MCP server and ask it for its tools (Module 6's discovery step).
-2. Build the model's toolbelt = **MCP tools + a local `search_manual` tool**.
-3. Run the agent loop: the model reasons, requests tools, we dispatch each to the right place,
-   feed results back, and repeat until ARIA reaches a final recommendation.
+1. Connect to the MCP server and ask it for its tools (Module 6's discovery step) — this gives
+   us a live list of what the colony's systems can currently do.
+2. Build the model's toolbelt — the full list of tools we describe to the model — as the
+   **union of two sources**: the MCP tools (`get_sensor`, `raise_alert`, `control_valve`, …)
+   plus one local `search_manual` tool that isn't part of MCP at all.
+3. Run the agent loop exactly as in Module 5: the model reasons, requests tools by name, we
+   figure out where each named tool actually lives and dispatch the call there, feed the result
+   back into the conversation, and repeat until ARIA reaches a final recommendation.
 
-You don't have to write it all — most is provided. Your job is to complete the one piece that
-decides *where each tool call goes*, so you understand the join between agents and MCP.
+You don't have to write it all — most of the scaffolding is provided, since you've already
+built each piece separately in earlier modules. Your job is to complete the one piece that
+decides *where each tool call goes* (MCP vs. local), so you understand, concretely, the join
+between agents and MCP rather than treating it as something that "just works."
 
 ---
 

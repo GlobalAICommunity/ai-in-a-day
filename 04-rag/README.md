@@ -18,43 +18,54 @@
 
 ## What is RAG, in plain words?
 
-**RAG** stands for **Retrieval-Augmented Generation**. Break it down:
-- **Generation** = the LLM writing an answer (Module 3).
-- **Retrieval** = fetching relevant information first (using embeddings, Module 2).
-- **Augmented** = we *augment* the model's prompt with that fetched information.
+**RAG** stands for **Retrieval-Augmented Generation**. It sounds intimidating, so break it
+down one word at a time:
+- **Generation** = the LLM writing an answer (Module 3) — the part you already know.
+- **Retrieval** = fetching relevant information first (using embeddings, Module 2) — the part
+  you also already know, from a different angle.
+- **Augmented** = we *augment*, meaning "add to," the model's prompt with that fetched
+  information before asking it to answer.
 
 So the recipe is: **when the user asks something, first go find the most relevant real
 documents, paste them into the prompt, and instruct the model to answer using only those.**
-The model stops relying on its fuzzy memory and starts answering from facts *we* supplied and
-control.
+The model stops relying on its fuzzy, general memory of "things text like this usually says"
+and starts answering from facts *we* supplied and control. Notice that RAG isn't really one
+new idea — it's Modules 2 and 3, combined in a specific order, to fix a specific problem.
 
 > Analogy: the difference between a student answering from vague memory (and bluffing when
 > unsure) versus an **open-book exam** where they must quote the textbook. RAG turns every
-> answer into an open-book answer.
+> answer into an open-book answer, and "I couldn't find that in the book" becomes an
+> acceptable, honest response instead of a guess.
 
 ### Why not just put the whole manual in the prompt?
-Two reasons. First, models have a limited **context window** (only so many tokens fit).
-Second, dumping irrelevant text actually *hurts* answers — the model gets distracted. So we
-retrieve **only the most relevant passages**. That's why we chunk and search instead of
-pasting everything.
+Two reasons. First, models have a limited **context window** (only so many tokens fit — see
+Module 3's glossary). Second, dumping irrelevant text actually *hurts* answers — the model can
+get distracted by unrelated passages and produce a worse response than if it had seen only the
+relevant part. So we retrieve **only the most relevant passages** for each specific question.
+That's why we chunk and search instead of pasting everything in every time.
 
 ---
 
 ## The two building blocks
 
 ### 1. Chunking
-We split each manual into **chunks** — here, one chunk per section (each `##` heading). Small,
-focused chunks mean that when we retrieve, we get *just* the relevant procedure, not a whole
-document. Chunking well is a real part of building good RAG.
+We split each manual into **chunks** — here, one chunk per section (each `##` heading in the
+markdown file). Small, focused chunks mean that when we retrieve, we get *just* the relevant
+procedure, not a whole document mixed with unrelated sections. Chunking well (not too big, not
+so small that context gets lost) is a real, practical part of building good RAG systems in the
+real world.
 
 ### 2. A vector store
-We embed every chunk (Module 2's `embed`) and keep the vectors in a **vector database**. We
-use **Chroma**, a simple local one. A vector store is just a specialised container that's very
-fast at answering \"which stored vectors are closest to *this* query vector?\" — which is
-exactly the retrieval step.
+We embed every chunk (using the exact same `embed(...)` function from Module 2) and keep the
+resulting vectors in a **vector database** — a specialised kind of storage built specifically
+for one job: answering "which stored vectors are closest to *this* query vector?" as fast as
+possible, even across thousands or millions of chunks. We use **Chroma**, a simple, local,
+file-free vector database that's perfect for learning and small projects. That "find the
+closest vectors" operation is exactly the retrieval step in RAG's name.
 
-We hand Chroma our own embeddings (computed with Ollama), so nothing needs to download and
-everything stays offline.
+We hand Chroma our own embeddings (computed with Ollama), so Chroma itself never needs to
+download its own model — nothing needs internet access at retrieval time, and everything
+stays offline once setup is done.
 
 ---
 
